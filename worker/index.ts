@@ -4,11 +4,13 @@ import OpenAI from "openai";
 
 const app = new Hono<{ Bindings: Env }>();
 
+const MODEL_NAME = "@cf/openai/gpt-oss-120b";
+
 app.post("/api/examples/create", async (c) => {
   const { prompt } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({ apiKey: c.env.CLOUDFLARE_AUTH_TOKEN, baseURL: c.env.BASE_URL });
   const response = await openai.responses.create({
-    model: "gpt-4.1",
+    model: MODEL_NAME,
     input: prompt,
   });
   return c.json({ response, outputText: response.output_text });
@@ -16,9 +18,9 @@ app.post("/api/examples/create", async (c) => {
 
 app.post("/api/examples/create/streaming", async (c) => {
   const { prompt } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY });
   const streamedResponse = await openai.responses.create({
-    model: "gpt-4.1",
+    model: MODEL_NAME,
     input: prompt,
     stream: true,
   });
@@ -34,7 +36,7 @@ app.post("/api/examples/create/streaming", async (c) => {
 
 app.post("/api/examples/create/stored", async (c) => {
   const { word, previous_response_id } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY });
 
   const response = await openai.responses.create({
     model: "gpt-4.1",
@@ -54,7 +56,7 @@ app.post("/api/examples/create/stored", async (c) => {
 
 app.post("/api/examples/create/code-interpreter", async (c) => {
   const { story } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY});
 
   const response = await openai.responses.create({
     model: "gpt-4.1",
@@ -91,7 +93,7 @@ function submitFeedback({ nps, whatWorked, whatCouldBeImproved }: Feedback) {
 
 app.post("/api/examples/create/function-calling", async (c) => {
   const { feedback } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({ apiKey: c.env.CLOUDFLARE_AUTH_TOKEN, baseURL: c.env.BASE_URL });
 
   const input: OpenAI.Responses.ResponseInputItem[] = [
     { role: "user", content: feedback },
@@ -124,18 +126,19 @@ app.post("/api/examples/create/function-calling", async (c) => {
       },
     },
   ];
+  console.log("Starting first request...");
   const instructions = `The user is going to submit feedback about this demo. 
       You will tell them that their feedback has been recorded.
       Ensure to include their feedback submission id in your response as well as who has been assigned their feedback submission.`;
   const firstResponse = await openai.responses.create({
-    model: "gpt-4.1",
+    model: MODEL_NAME,
     input,
     instructions,
     tools,
     tool_choice: "required"
   });
   const toolCall = firstResponse.output[0];
-
+  console.log({toolCall})
   let finalResponse;
   let result;
   if (toolCall.type === "function_call" && toolCall.name === "submitFeedback") {
@@ -149,8 +152,9 @@ app.post("/api/examples/create/function-calling", async (c) => {
       call_id: toolCall.call_id,
       output: JSON.stringify(result),
     });
+    console.log("Starting second request...");
     finalResponse = await openai.responses.create({
-      model: "gpt-4.1",
+      model: MODEL_NAME,
       instructions,
       input,
       tools,

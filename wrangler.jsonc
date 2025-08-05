@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "responsible",
+	"name": "responses-oss-workers-ai",
 	"main": "worker/index.ts",
 	"compatibility_date": "2025-07-30",
 	"compatibility_flags": ["nodejs_compat"],
