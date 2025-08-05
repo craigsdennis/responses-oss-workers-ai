@@ -21,14 +21,15 @@ function App() {
         <div className="max-w-7xl mx-auto space-y-8 pb-32">
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             <BasicExample />
-            <StreamingExample />
+            <ReasoningExample />  
           </div>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <WordGameExample />
-            <CodeInterpreterExample />
+              <FunctionCallingExample />
           </div>
-          <ReasoningExample />
-          <FunctionCallingExample />
+          <h2>Not yet Implemented</h2>
+          <StreamingExample />
+          <WordGameExample />
+          <CodeInterpreterExample />
           <RelationshipViewer />
         </div>
       </div>

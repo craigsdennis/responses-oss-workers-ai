@@ -8,7 +8,10 @@ const MODEL_NAME = "@cf/openai/gpt-oss-120b";
 
 app.post("/api/examples/create", async (c) => {
   const { prompt } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.CLOUDFLARE_AUTH_TOKEN, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({
+    apiKey: c.env.CLOUDFLARE_AUTH_TOKEN,
+    baseURL: c.env.BASE_URL,
+  });
   const response = await openai.responses.create({
     model: MODEL_NAME,
     input: prompt,
@@ -56,7 +59,7 @@ app.post("/api/examples/create/stored", async (c) => {
 
 app.post("/api/examples/create/code-interpreter", async (c) => {
   const { story } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY});
+  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY });
 
   const response = await openai.responses.create({
     model: "gpt-4.1",
@@ -93,7 +96,10 @@ function submitFeedback({ nps, whatWorked, whatCouldBeImproved }: Feedback) {
 
 app.post("/api/examples/create/function-calling", async (c) => {
   const { feedback } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.CLOUDFLARE_AUTH_TOKEN, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({
+    apiKey: c.env.CLOUDFLARE_AUTH_TOKEN,
+    baseURL: c.env.BASE_URL,
+  });
 
   const input: OpenAI.Responses.ResponseInputItem[] = [
     { role: "user", content: feedback },
@@ -135,10 +141,10 @@ app.post("/api/examples/create/function-calling", async (c) => {
     input,
     instructions,
     tools,
-    tool_choice: "required"
+    tool_choice: "required",
   });
   const toolCall = firstResponse.output[0];
-  console.log({toolCall})
+  console.log({ toolCall });
   let finalResponse;
   let result;
   if (toolCall.type === "function_call" && toolCall.name === "submitFeedback") {
@@ -170,7 +176,10 @@ app.post("/api/examples/create/function-calling", async (c) => {
 
 app.post("/api/examples/create/character-sample", async (c) => {
   const { title } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({
+    apiKey: c.env.OPENAI_API_KEY,
+    baseURL: c.env.BASE_URL,
+  });
 
   const response = await openai.responses.create({
     model: "gpt-4.1",
@@ -185,17 +194,20 @@ app.post("/api/examples/create/character-sample", async (c) => {
 
 app.post("/api/examples/create/reasoning", async (c) => {
   const { topic, effort } = await c.req.json();
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({
+    apiKey: c.env.CLOUDFLARE_AUTH_TOKEN,
+    baseURL: c.env.BASE_URL,
+  });
 
   const response = await openai.responses.create({
-    model: "o4-mini",
+    model: MODEL_NAME,
     instructions: `You help plan educational lessons.
     The user will tell you they are trying to learn.
     Your job is to create a detailed list of prerequisite skills and information, the user should ensure they know.
     `,
     input: topic,
     reasoning: {
-      effort, 
+      effort,
     },
   });
   return c.json({ response, outputText: response.output_text });
@@ -269,7 +281,7 @@ app.post("/api/examples/parse/relationships", async (c) => {
     additionalProperties: false,
   };
 
-  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY, baseURL: c.env.BASE_URL });
+  const openai = new OpenAI({ apiKey: c.env.OPENAI_API_KEY });
 
   const response = await openai.responses.parse({
     model: "gpt-4.1",
