@@ -1,4 +1,4 @@
-# Responsible
+# Responsible - Cloudflare Workers AI Version
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/craigsdennis/responses-api-workers)
 
@@ -14,7 +14,8 @@ Check the API out at [worker/index.ts](./worker/index.ts)
 
 Copy [./.example.dev.vars](./example.dev.vars) to ./.dev.vars and replace with your key.
 
-OPTIONAL: Modify your BASE_URL
+Modify your BASE_URL to use your Cloudflare account ID.
+Add your CLOUDFLARE_AUTH_TOKEN.
 
 ```bash
 npm run dev
