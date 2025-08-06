@@ -26,11 +26,11 @@ function App() {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
               <FunctionCallingExample />
           </div>
+          <RelationshipViewer />
           <h2>Not yet Implemented</h2>
           <StreamingExample />
           <WordGameExample />
           <CodeInterpreterExample />
-          <RelationshipViewer />
         </div>
       </div>
       
