@@ -49,7 +49,6 @@ function submitFeedback({ nps, whatWorked, whatCouldBeImproved }: Feedback) {
   return { success: true, assignee: "Bob", submissionId: crypto.randomUUID() };
 }
 
-// TODO: Not working
 app.post("/api/examples/create/function-calling", async (c) => {
   const { feedback } = await c.req.json();
   const openai = new OpenAI({
@@ -97,13 +96,14 @@ app.post("/api/examples/create/function-calling", async (c) => {
     input,
     instructions,
     tools,
-    tool_choice: "required",
+    //tool_choice: "required",
   });
-  const toolCall = firstResponse.output[0];
+  const toolCalls = firstResponse.output.filter(output => output.type === "function_call");
+  const toolCall = toolCalls[0];
   console.log({ toolCall });
   let finalResponse;
   let result;
-  if (toolCall.type === "function_call" && toolCall.name === "submitFeedback") {
+  if (toolCall.name === "submitFeedback") {
     const args = JSON.parse(toolCall.arguments);
     result = submitFeedback(args);
     // Include the tool call
